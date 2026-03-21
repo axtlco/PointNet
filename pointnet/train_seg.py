@@ -25,10 +25,13 @@ def step(points, pc_labels, class_labels, model):
     """
     
     # TODO : Implement step function for segmentation.
-
-    loss = None
-    logits = None
-    preds = None
+    points = points.to(device)
+    pc_labels = pc_labels.to(device)
+    class_labels = class_labels.to(device)
+    logits, _, feat_trans = model(points)
+    seg_loss = F.cross_entropy(logits, pc_labels)
+    loss = seg_loss + get_orthogonal_loss(feat_trans)
+    preds = torch.argmax(logits, dim=1)
     return loss, logits, preds
 
 
